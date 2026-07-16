@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Orb States — Demo</title>
+<style>
+  :root{
+    --bg: #0a0b10;
+    --panel: #12141c;
+    --border: rgba(255,255,255,0.08);
+    --text: #e8ecf5;
+    --muted: #8a90a6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background: radial-gradient(circle at 50% 20%, #14161f 0%, #08090d 70%);
+    color:var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:28px;
+    padding:48px 20px 64px;
+  }
+  h1{font-size:15px; font-weight:600; letter-spacing:.04em; color:var(--muted); text-transform:uppercase; margin:0;}
+  #stage{
+    width:260px; height:260px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  canvas{display:block;}
+  #label{
+    font-size:13px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    min-height:16px;
+  }
+  #controls{
+    display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+  }
+  button.state-btn{
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:8px 14px;
+    border-radius:8px;
+    font-size:12px;
+    cursor:pointer;
+    transition:background .15s, border-color .15s;
+  }
+  button.state-btn:hover{ background:#1a1d29; border-color:rgba(255,255,255,0.18); }
+  button.state-btn.active{ border-color:#6c7fff; color:#a9b4ff; }
+
+  #chatDemoWrap{
+    width:100%;
+    max-width:480px;
+    margin-top:12px;
+  }
+  #chatDemoLabel{
+    font-size:11px;
+    color:var(--muted);
+    text-align:center;
+    margin-bottom:10px;
+  }
+  #chatBar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:10px 12px;
+  }
+  #chatBar input{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--text);
+    font-size:14px;
+    padding:6px 4px;
+  }
+  #chatBar input::placeholder{ color:var(--muted); }
+  #sendBtn{
+    width:34px; height:34px;
+    border-radius:50%;
+    border:none;
+    background:#3a3f66;
+    color:#fff;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px;
+    transition:background .15s, opacity .15s;
+    opacity:.5;
+  }
+  #sendBtn.ready{ background:#6c7fff; opacity:1; }
+  #miniOrbWrap{ width:26px; height:26px; }
+</style>
+</head>
+<body>
+
+<h1>Estados de la esfera</h1>
+
+<div id="stage">
+  <canvas id="orbCanvas" width="520" height="520" style="width:260px;height:260px;"></canvas>
+</div>
+<div id="label">Esfera en reposo</div>
+
+<div id="controls">
+  <button class="state-btn" data-state="reposo">Reposo</button>
+  <button class="state-btn" data-state="enfoque">Inicio de pulso</button>
+  <button class="state-btn" data-state="escritura">Pulso máximo</button>
+  <button class="state-btn" data-state="respuesta">Concentración</button>
+</div>
+
+<div id="chatDemoWrap">
+  <div id="chatDemoLabel">Demo real: escribe en el campo para ver el cambio de estado en vivo</div>
+  <div id="chatBar">
+    <div id="miniOrbWrap">
+      <canvas id="miniOrb" width="80" height="80" style="width:26px;height:26px;"></canvas>
+    </div>
+    <input id="chatInput" type="text" placeholder="Escribe un mensaje...">
+    <button id="sendBtn" aria-label="Enviar">➤</button>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  const STATES = {
+    reposo:     { glass:1.0, swirlOpacity:0.12, swirlSpeed:0.12, swirlCount:2, glow:0.18, ring:0.0,  scale:1.00, hue:[220,255,255], breathe:0.015 },
+    enfoque:    { glass:1.0, swirlOpacity:0.32, swirlSpeed:0.35, swirlCount:3, glow:0.40, ring:0.18, scale:1.02, hue:[225,235,255], breathe:0.02 },
+    escritura:  { glass:0.55, swirlOpacity:0.92, swirlSpeed:1.25,swirlCount:4, glow:1.00, ring:0.55, scale:1.05, hue:[180,140,255], breathe:0.03 },
+    respuesta:  { glass:0.15, swirlOpacity:1.00, swirlSpeed:1.65,swirlCount:5, glow:1.25, ring:0.85, scale:1.05, hue:[90,150,255],  breathe:0.025 },
+  };
+
+  const LABELS = {
+    reposo:'Esfera en reposo',
+    enfoque:'Inicio de pulso',
+    escritura:'Pulso máximo',
+    respuesta:'Concentración'
+  };
+
+  function createOrb(canvas, size){
+    const ctx = canvas.getContext('2d');
+    let current = Object.assign({}, STATES.reposo);
+    let target = STATES.reposo;
+    let t = 0;
+
+    function lerp(a,b,f){ return a + (b-a)*f; }
+
+    function setState(name){
+      target = STATES[name];
+    }
+
+    function step(){
+      const f = 0.06;
+      current.glass       = lerp(current.glass, target.glass, f);
+      current.swirlOpacity= lerp(current.swirlOpacity, target.swirlOpacity, f);
+      current.swirlSpeed  = lerp(current.swirlSpeed, target.swirlSpeed, f);
+      current.swirlCount  = lerp(current.swirlCount, target.swirlCount, f);
+      current.glow        = lerp(current.glow, target.glow, f);
+      current.ring         = lerp(current.ring, target.ring, f);
+      current.scale        = lerp(current.scale, target.scale, f);
+      current.breathe      = lerp(current.breathe, target.breathe, f);
+      current.hue[0] = lerp(current.hue[0], target.hue[0], f);
+      current.hue[1] = lerp(current.hue[1], target.hue[1], f);
+      current.hue[2] = lerp(current.hue[2], target.hue[2], f);
+    }
+
+    function draw(){
+      t += 0.016;
+      step();
+
+      const w = canvas.width, h = canvas.height;
+      const cx = w/2, cy = h/2;
+      const baseR = size*0.34;
+      const breatheR = baseR * (1 + Math.sin(t*1.6)*current.breathe) * current.scale;
+
+      ctx.clearRect(0,0,w,h);
+
+      const [h1,h2,h3] = current.hue;
+      const c1 = `hsl(${h1},90%,72%)`;
+      const c2 = `hsl(${h2},85%,60%)`;
+      const c3 = `hsl(${h3},90%,68%)`;
+
+      if(current.ring > 0.02){
+        const ringR = breatheR * (1.28 + Math.sin(t*2)*0.02);
+        const g = ctx.createRadialGradient(cx,cy,breatheR*0.9,cx,cy,ringR*1.15);
+        g.addColorStop(0, `hsla(${h2},90%,65%,0)`);
+        g.addColorStop(0.6, `hsla(${h2},90%,65%,${0.28*current.ring})`);
+        g.addColorStop(1, `hsla(${h2},90%,65%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(cx,cy,ringR*1.15,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      if(current.glow > 0.02){
+        const glowR = breatheR * 1.5;
+        const g = ctx.createRadialGradient(cx,cy,breatheR*0.2,cx,cy,glowR);
+        g.addColorStop(0, `hsla(${h2},90%,68%,${0.35*current.glow})`);
+        g.addColorStop(1, `hsla(${h2},90%,68%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(cx,cy,glowR,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      if(current.glass > 0.02){
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx,cy,breatheR,0,Math.PI*2);
+        ctx.clip();
+        const g = ctx.createRadialGradient(cx-breatheR*0.3,cy-breatheR*0.35,breatheR*0.1,cx,cy,breatheR*1.1);
+        g.addColorStop(0, `hsla(0,0%,100%,${0.9*current.glass})`);
+        g.addColorStop(0.4, `hsla(${h1},40%,85%,${0.35*current.glass})`);
+        g.addColorStop(1, `hsla(${h3},60%,35%,${0.15*current.glass})`);
+        ctx.fillStyle = g;
+        ctx.fillRect(cx-breatheR,cy-breatheR,breatheR*2,breatheR*2);
+        ctx.restore();
+      }
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx,cy,breatheR*0.98,0,Math.PI*2);
+      ctx.clip();
+
+      const swirlCount = Math.round(current.swirlCount);
+      const rot = t * current.swirlSpeed;
+      for(let i=0;i<swirlCount;i++){
+        const angOffset = (i/swirlCount)*Math.PI*2 + rot;
+        ctx.save();
+        ctx.translate(cx,cy);
+        ctx.rotate(angOffset);
+        const grad = ctx.createLinearGradient(-breatheR,0,breatheR,0);
+        grad.addColorStop(0, `hsla(${h1},90%,75%,0)`);
+        grad.addColorStop(0.5, i%2===0 ? c2 : c3);
+        grad.addColorStop(1, `hsla(${h3},90%,60%,0)`);
+        ctx.strokeStyle = grad;
+        ctx.globalAlpha = current.swirlOpacity * (0.55 + 0.45*Math.sin(t*2+i));
+        ctx.lineWidth = breatheR*0.22;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-breatheR*0.9, 0);
+        ctx.quadraticCurveTo(0, breatheR*0.55*(i%2===0?1:-1), breatheR*0.9, 0);
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.restore();
+
+      if(current.glass > 0.15){
+        const hlR = breatheR*0.22;
+        const g = ctx.createRadialGradient(cx-breatheR*0.32,cy-breatheR*0.38,0,cx-breatheR*0.32,cy-breatheR*0.38,hlR);
+        g.addColorStop(0, `hsla(0,0%,100%,${0.55*current.glass})`);
+        g.addColorStop(1, `hsla(0,0%,100%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(cx-breatheR*0.32,cy-breatheR*0.38,hlR,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+    return { setState };
+  }
+
+  const mainOrb = createOrb(document.getElementById('orbCanvas'), 520);
+  const miniOrb = createOrb(document.getElementById('miniOrb'), 80);
+
+  const buttons = document.querySelectorAll('.state-btn');
+  const label = document.getElementById('label');
+  function activate(name, btnEl){
+    mainOrb.setState(name);
+    label.textContent = LABELS[name];
+    buttons.forEach(b=>b.classList.remove('active'));
+    if(btnEl) btnEl.classList.add('active');
+  }
+  buttons.forEach(b=>{
+    b.addEventListener('click', ()=> activate(b.dataset.state, b));
+  });
+  activate('reposo', buttons[0]);
+
+  const input = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+  let typingTimeout = null;
+
+  function miniSet(name){ miniOrb.setState(name); }
+  miniSet('reposo');
+
+  input.addEventListener('focus', ()=> miniSet('enfoque'));
+  input.addEventListener('blur', ()=> {
+    if(input.value.trim().length === 0) miniSet('reposo');
+  });
+  input.addEventListener('input', ()=>{
+    sendBtn.classList.toggle('ready', input.value.trim().length > 0);
+    miniSet('escritura');
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(()=>{
+      miniSet(input.value.trim().length ? 'enfoque' : 'reposo');
+    }, 700);
+  });
+
+  sendBtn.addEventListener('click', ()=>{
+    if(input.value.trim().length === 0) return;
+    clearTimeout(typingTimeout);
+    miniSet('respuesta');
+    input.value = '';
+    sendBtn.classList.remove('ready');
+    setTimeout(()=>{
+      miniSet('reposo');
+    }, 2200);
+  });
+
+})();
+</script>
+</body>
+</html>
