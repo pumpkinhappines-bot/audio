@@ -1,0 +1,12 @@
+# Datos personales — chats guardados, foto de perfil, tema elegido.
+# Cada quien que corra la app genera los suyos localmente.
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Nunca subas tu llave real si algún día la guardas en un archivo .env
+.env

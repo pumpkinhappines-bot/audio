@@ -1,0 +1,38 @@
+{
+  "f5c2c4ed-b50b-4a5e-81b0-bf0b1d88be5b": {
+    "title": "Hola",
+    "updated_at": "2026-07-20T06:40:29",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Hola"
+      },
+      {
+        "role": "assistant",
+        "content": "¡Hola! ¿En qué puedo ayudarte hoy?"
+      },
+      {
+        "role": "user",
+        "content": "Que haces?"
+      },
+      {
+        "role": "assistant",
+        "content": "Soy LunaIA, tu asistente virtual. Estoy aquí para responder preguntas, ayudarte con tareas, ofrecer información o simplemente conversar. ¿En qué puedo ayudarte ahora?"
+      }
+    ]
+  },
+  "c3b04b14-9a68-4ce2-b0fa-3e47f5fc73bb": {
+    "title": "No escribe nadaaa",
+    "updated_at": "2026-07-20T06:53:04",
+    "messages": [
+      {
+        "role": "user",
+        "content": "No escribe nadaaa"
+      },
+      {
+        "role": "assistant",
+        "content": "¡Hola! ¡Aquí estoy! 🌙\n\nParece que hubo un pequeño problema de conexión o un error al enviar tu mensaje anterior. ¿En qué puedo ayudarte hoy? Estoy lista para escucharte."
+      }
+    ]
+  }
+}

@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LunaIA</title>
+<link href="assets/luna.png" rel="icon" type="image/png"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "inverse-on-surface": "#2f3038",
+          "primary-fixed-dim": "#bbc3ff",
+          "primary-fixed": "#dfe0ff",
+          "tertiary-fixed": "#e6deff",
+          "on-tertiary": "#30128c",
+          "surface-container": "#1e1f27",
+          "secondary-fixed-dim": "#49dbd3",
+          "tertiary-container": "#9380f4",
+          "secondary": "#49dbd3",
+          "on-primary-container": "#001685",
+          "surface-container-highest": "#34343c",
+          "primary-container": "#7586ff",
+          "on-tertiary-fixed": "#1b0062",
+          "background": "#0a0b10",
+          "surface-tint": "#bbc3ff",
+          "on-error": "#690005",
+          "on-tertiary-container": "#290386",
+          "on-background": "#e3e1ec",
+          "error-container": "#93000a",
+          "primary": "#bbc3ff",
+          "error": "#ffb4ab",
+          "on-primary-fixed": "#000d5f",
+          "surface": "#12131a",
+          "surface-dim": "#12131a",
+          "on-error-container": "#ffdad6",
+          "on-primary-fixed-variant": "#1f35b7",
+          "surface-variant": "#34343c",
+          "surface-bright": "#383841",
+          "inverse-primary": "#3d50cf",
+          "on-secondary-fixed": "#00201e",
+          "tertiary": "#c9beff",
+          "tertiary-fixed-dim": "#c9beff",
+          "on-tertiary-fixed-variant": "#4831a3",
+          "on-surface": "#e3e1ec",
+          "secondary-fixed": "#6cf8ef",
+          "outline-variant": "#454654",
+          "on-secondary": "#003734",
+          "on-surface-variant": "#c5c5d6",
+          "surface-container-lowest": "#0d0e15",
+          "surface-container-low": "#1a1b23",
+          "on-secondary-container": "#004340",
+          "outline": "#8f8fa0",
+          "surface-container-high": "#292931",
+          "inverse-surface": "#e3e1ec",
+          "on-secondary-fixed-variant": "#00504c",
+          "secondary-container": "#00b9b2",
+          "on-primary": "#001b97"
+        },
+        borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+        spacing: {
+          "message-spacing": "32px",
+          "container-padding": "40px",
+          "unit": "8px",
+          "panel-gap": "16px",
+          "gutter": "24px"
+        },
+        fontFamily: {
+          "display-lg": ["-apple-system","BlinkMacSystemFont","SF Pro Display","Segoe UI Variable","Segoe UI","Inter","sans-serif"],
+          "headline-md": ["-apple-system","BlinkMacSystemFont","SF Pro Display","Segoe UI Variable","Segoe UI","Inter","sans-serif"],
+          "body-md": ["-apple-system","BlinkMacSystemFont","SF Pro Text","Segoe UI Variable","Segoe UI","Inter","sans-serif"],
+          "body-lg": ["-apple-system","BlinkMacSystemFont","SF Pro Text","Segoe UI Variable","Segoe UI","Inter","sans-serif"],
+          "label-md": ["-apple-system","BlinkMacSystemFont","SF Pro Text","Segoe UI Variable","Segoe UI","Inter","sans-serif"],
+          "label-sm": ["-apple-system","BlinkMacSystemFont","SF Pro Text","Segoe UI Variable","Segoe UI","Inter","sans-serif"],
+          "headline-lg": ["-apple-system","BlinkMacSystemFont","SF Pro Display","Segoe UI Variable","Segoe UI","Inter","sans-serif"]
+        },
+        fontSize: {
+          "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
+          "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+          "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+          "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+          "label-md": ["14px", { lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "500" }],
+          "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }],
+          "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "600" }]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  :root {
+    /* --- Variables de tema: cambiar estas 2 recolorea TODA la app --- */
+    --c-a: #3ad0c8;
+    --c-b: #6c7fff;
+    --c-a-soft: rgba(58,208,200,0.14);
+    --c-b-soft: rgba(108,127,255,0.16);
+    --c-glow: rgba(108,127,255,0.5);
+  }
+  html, body { height: 100%; }
+  body {
+    background: radial-gradient(circle at center, #14161f 0%, #08090d 100%);
+    margin: 0;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .glass-panel {
+    background: rgba(18, 20, 28, 0.66);
+    backdrop-filter: blur(44px) saturate(150%);
+    -webkit-backdrop-filter: blur(44px) saturate(150%);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 20px 60px -20px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.04) inset;
+  }
+  .user-glow { box-shadow: 0 0 20px var(--c-glow); border: 1px solid var(--c-b-soft); }
+  .assistant-border { border-left: 2px solid var(--c-a); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  @keyframes fadeSlide { from { opacity:0; transform: translateY(10px);} to { opacity:1; transform: translateY(0);} }
+  .msg-in { animation: fadeSlide .45s cubic-bezier(0.22, 1, 0.36, 1); }
+
+  * { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+  button { -webkit-tap-highlight-color: transparent; }
+  .nav-item { transition: background-color .25s, color .25s, transform .25s; }
+  .nav-item:hover { color: var(--c-b); background-color: rgba(255,255,255,0.05); }
+  .nav-item:active { transform: scale(0.98); }
+  .nav-item-active { background: var(--c-b-soft); color: var(--c-b); }
+  .icon-btn { transition: background-color .2s, opacity .2s, transform .2s; }
+  .icon-btn:hover { background: rgba(255,255,255,0.06); }
+  .round-btn { transition: transform .2s, box-shadow .2s, filter .2s; }
+  .round-btn:hover { transform: scale(1.04); filter: brightness(1.06); }
+  .round-btn:active { transform: scale(0.96); }
+  .chip { transition: border-color .2s, color .2s, background-color .2s; }
+
+  /* --- Botones que usan el color de acento del tema --- */
+  #mic-btn { background: linear-gradient(135deg, var(--c-a), var(--c-b)); }
+  #send-btn { background: var(--c-b); }
+
+  /* --- Orbe pequeño --- */
+  #orb-canvas { display:block; transition: filter .3s; }
+
+  /* --- Micrófono / onda de voz --- */
+  #mic-btn { transition: box-shadow .25s, filter .25s, transform .2s; }
+  #mic-btn.listening { box-shadow: 0 0 20px var(--c-glow); }
+  #wave-wrap { display:none; flex:1 1 0%; min-width:0; height:40px; position:relative; }
+  #wave-wrap.active { display:block; }
+  #wave-label {
+    position:absolute; top:-16px; left:0; right:0; text-align:center;
+    font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:#8a90a6;
+    opacity:0; transition:opacity .3s;
+  }
+  #wave-label.show { opacity:1; }
+  canvas#wave-canvas { width:100%; height:100%; display:block; }
+
+  /* --- Campo de mensaje: borde de foco con el color del tema --- */
+  .chat-input-bar:focus-within { border-color: var(--c-b); }
+
+  /* --- Modales --- */
+  .modal-backdrop.open { display:flex !important; }
+
+  /* --- Swatches de tema --- */
+  .theme-swatch { transition: border-color .2s, transform .2s; border: 1.5px solid rgba(255,255,255,0.08); }
+  .theme-swatch:hover { transform: scale(1.03); }
+  .theme-swatch.active { border-color: rgba(255,255,255,0.55); }
+
+  /* --- Historial --- */
+  .history-item { transition: background-color .2s, color .2s; }
+  .history-item:hover { color: var(--c-b); }
+
+  /* --- Campana de notificaciones --- */
+  #btn-notify-dot { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.8); transition: background-color .2s, opacity .2s; }
+  #btn-notify.muted #btn-notify-dot { background: #6b7280; box-shadow: none; opacity: 0.6; }
+  #btn-notify.muted #btn-notify-icon { opacity: 0.55; }
+</style>
+</head>
+<body class="h-screen w-screen text-on-surface font-body-md overflow-hidden selection:bg-primary/30">
+
+<div class="flex h-full w-full">
+
+  <!-- Sidebar -->
+  <aside class="flex flex-col h-full w-64 border-r border-outline-variant/20 bg-surface-container-low/40 backdrop-blur-[40px] py-container-padding gap-panel-gap z-20">
+    <div class="px-6 mb-8">
+      <div class="flex items-center gap-3 mb-1">
+        <img src="assets/luna.png" alt="LunaIA" class="w-10 h-10 rounded-full object-cover flex-shrink-0"/>
+        <div class="flex flex-col">
+          <span class="font-headline-md text-headline-md text-on-surface leading-tight">LunaIA</span>
+          <span class="font-label-sm text-label-sm text-outline">Asistente personal</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="flex-1 px-4 space-y-2 overflow-y-auto no-scrollbar">
+      <button id="btn-new-chat" class="nav-item nav-item-active w-full flex items-center gap-3 px-4 py-3 font-bold rounded-xl">
+        <span class="material-symbols-outlined">add_box</span>
+        <span class="font-label-md text-label-md">Nuevo chat</span>
+      </button>
+      <button id="btn-history" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant font-medium rounded-xl">
+        <span class="material-symbols-outlined">history</span>
+        <span class="font-label-md text-label-md">Historial</span>
+      </button>
+      <div id="history-panel" class="hidden pl-2 pr-1 space-y-1">
+        <p id="history-empty" class="text-[11px] text-outline px-2 py-2">Todavía no hay chats guardados.</p>
+      </div>
+    </nav>
+
+    <div class="px-4 mt-auto space-y-4">
+      <div class="space-y-1">
+        <button id="btn-profile" class="nav-item w-full flex items-center gap-3 px-4 py-2 text-on-surface-variant font-medium rounded-xl">
+          <span class="material-symbols-outlined">account_circle</span>
+          <span class="font-label-md text-label-md">Perfil</span>
+        </button>
+        <button id="btn-settings" class="nav-item w-full flex items-center gap-3 px-4 py-2 text-on-surface-variant font-medium rounded-xl">
+          <span class="material-symbols-outlined">settings</span>
+          <span class="font-label-md text-label-md">Ajustes</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 relative flex flex-col items-center justify-center p-container-padding overflow-hidden">
+    <header class="absolute top-0 left-0 right-0 h-20 flex justify-between items-center px-10 z-10 pointer-events-none">
+      <div class="flex items-center gap-3 pointer-events-auto">
+        <img src="assets/luna.png" alt="LunaIA" class="w-8 h-8 rounded-full object-cover flex-shrink-0"/>
+        <div class="flex flex-col leading-tight">
+          <h1 class="font-headline-md text-headline-md font-semibold text-on-surface">LunaIA</h1>
+          <span class="font-label-sm text-[11px] text-outline">Lista para ayudar</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 pointer-events-auto">
+        <button id="btn-notify" class="icon-btn p-2 rounded-full text-on-surface-variant relative" title="Notificaciones activadas">
+          <span id="btn-notify-icon" class="material-symbols-outlined">notifications</span>
+          <span id="btn-notify-dot" class="absolute top-1 right-1 w-2 h-2 rounded-full"></span>
+        </button>
+        <div id="user-avatar" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center ml-1 overflow-hidden">
+          <span id="user-avatar-icon" class="material-symbols-outlined text-lg text-on-surface-variant">person</span>
+          <img id="user-avatar-img" alt="Tu foto de perfil" class="w-full h-full object-cover hidden"/>
+        </div>
+      </div>
+    </header>
+
+    <!-- Panel de chat -->
+    <div class="w-full h-[calc(100vh-112px)] mt-6 flex items-stretch">
+      <div class="flex-1 glass-panel rounded-[20px] flex flex-col relative z-0 overflow-hidden">
+
+        <div id="thread" class="flex-1 overflow-y-auto no-scrollbar p-8 space-y-message-spacing">
+          <div id="empty-state" class="h-full flex flex-col items-center justify-center text-center gap-2 opacity-60">
+            <span class="material-symbols-outlined text-4xl text-outline">forum</span>
+            <p class="font-body-md text-body-md text-on-surface-variant">Escribe algo para empezar la conversación.</p>
+            <p id="empty-hint" class="text-[11px] text-outline">(La API todavía no está conectada — Python solo simula la respuesta.)</p>
+          </div>
+        </div>
+
+        <div class="p-6 pt-2 bg-gradient-to-t from-[#12141c] to-transparent">
+          <form id="chat-form" class="chat-input-bar flex items-center gap-3 glass-panel p-2 rounded-full border border-white/10 group transition-colors">
+            <button id="mic-btn" type="button" class="round-btn w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg flex-shrink-0">
+              <span class="material-symbols-outlined">mic</span>
+            </button>
+
+            <div id="orb-mini-wrap" class="flex-shrink-0 flex items-center justify-center" title="Estado del asistente">
+              <canvas id="orb-canvas" width="80" height="80" style="width:26px;height:26px;"></canvas>
+            </div>
+
+            <input id="chat-input" autocomplete="off" class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline font-body-md px-2" placeholder="Mensaje..." type="text"/>
+
+            <div id="wave-wrap">
+              <div id="wave-label">Escuchando...</div>
+              <canvas id="wave-canvas" width="900" height="80"></canvas>
+            </div>
+
+            <button id="send-btn" type="submit" class="round-btn w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg flex-shrink-0">
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal: Perfil -->
+<div id="profile-backdrop" class="modal-backdrop fixed inset-0 bg-black/60 z-40" style="display:none; align-items:center; justify-content:center;">
+  <div class="glass-panel rounded-2xl p-6 w-80 relative">
+    <button id="profile-close" class="icon-btn absolute top-3 right-3 p-1.5 rounded-full text-on-surface-variant">
+      <span class="material-symbols-outlined text-lg">close</span>
+    </button>
+    <h2 class="font-headline-md text-headline-md text-on-surface mb-5 text-center">Tu perfil</h2>
+    <div class="flex flex-col items-center gap-4">
+      <div id="profile-preview-wrap" class="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+        <span id="profile-preview-icon" class="material-symbols-outlined text-4xl text-on-surface-variant">person</span>
+        <img id="profile-preview-img" class="w-full h-full object-cover hidden" alt="Vista previa de tu foto"/>
+      </div>
+      <button id="profile-pick-btn" class="nav-item px-4 py-2 rounded-xl bg-primary/10 text-primary font-label-md text-label-md">Cambiar foto</button>
+      <p id="profile-status" class="text-[11px] text-outline text-center min-h-[14px]"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Ajustes -->
+<div id="settings-backdrop" class="modal-backdrop fixed inset-0 bg-black/60 z-40" style="display:none; align-items:center; justify-content:center;">
+  <div class="glass-panel rounded-2xl p-6 w-80 relative">
+    <button id="settings-close" class="icon-btn absolute top-3 right-3 p-1.5 rounded-full text-on-surface-variant">
+      <span class="material-symbols-outlined text-lg">close</span>
+    </button>
+    <h2 class="font-headline-md text-headline-md text-on-surface mb-1 text-center">Ajustes</h2>
+    <p class="font-label-sm text-label-sm text-outline mb-4 text-center">Tema de color</p>
+    <div id="theme-options" class="grid grid-cols-2 gap-3"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   ORBE — estados (reposo / enfoque / escritura / respuesta)
+   Adaptado de orb_states.html
+   ========================================================= */
+(function(){
+  const STATES = {
+    reposo:     { glass:1.0, swirlOpacity:0.12, swirlSpeed:0.12, swirlCount:2, glow:0.18, ring:0.0,  scale:1.00, hue:[220,255,255], breathe:0.015 },
+    enfoque:    { glass:1.0, swirlOpacity:0.32, swirlSpeed:0.35, swirlCount:3, glow:0.40, ring:0.18, scale:1.02, hue:[225,235,255], breathe:0.02 },
+    escritura:  { glass:0.55, swirlOpacity:0.92, swirlSpeed:1.25,swirlCount:4, glow:1.00, ring:0.55, scale:1.05, hue:[180,140,255], breathe:0.03 },
+    respuesta:  { glass:0.15, swirlOpacity:1.00, swirlSpeed:1.65,swirlCount:5, glow:1.25, ring:0.85, scale:1.05, hue:[90,150,255],  breathe:0.025 },
+  };
+
+  const LABELS = {
+    reposo:'Esfera en reposo',
+    enfoque:'Inicio de pulso',
+    escritura:'Pulso máximo',
+    respuesta:'Concentración'
+  };
+
+  function createOrb(canvas, size){
+    const ctx = canvas.getContext('2d');
+    let current = Object.assign({}, STATES.reposo);
+    let target = STATES.reposo;
+    let t = 0;
+
+    function lerp(a,b,f){ return a + (b-a)*f; }
+
+    function setState(name){ target = STATES[name]; }
+
+    function step(){
+      const f = 0.06;
+      current.glass       = lerp(current.glass, target.glass, f);
+      current.swirlOpacity= lerp(current.swirlOpacity, target.swirlOpacity, f);
+      current.swirlSpeed  = lerp(current.swirlSpeed, target.swirlSpeed, f);
+      current.swirlCount  = lerp(current.swirlCount, target.swirlCount, f);
+      current.glow        = lerp(current.glow, target.glow, f);
+      current.ring         = lerp(current.ring, target.ring, f);
+      current.scale        = lerp(current.scale, target.scale, f);
+      current.breathe      = lerp(current.breathe, target.breathe, f);
+      current.hue[0] = lerp(current.hue[0], target.hue[0], f);
+      current.hue[1] = lerp(current.hue[1], target.hue[1], f);
+      current.hue[2] = lerp(current.hue[2], target.hue[2], f);
+    }
+
+    function draw(){
+      t += 0.016;
+      step();
+
+      const w = canvas.width, h = canvas.height;
+      const cx = w/2, cy = h/2;
+      const baseR = size*0.34;
+      const breatheR = baseR * (1 + Math.sin(t*1.6)*current.breathe) * current.scale;
+
+      ctx.clearRect(0,0,w,h);
+
+      const [h1,h2,h3] = current.hue;
+      const c2 = `hsl(${h2},85%,60%)`;
+      const c3 = `hsl(${h3},90%,68%)`;
+
+      if(current.ring > 0.02){
+        const ringR = breatheR * (1.28 + Math.sin(t*2)*0.02);
+        const g = ctx.createRadialGradient(cx,cy,breatheR*0.9,cx,cy,ringR*1.15);
+        g.addColorStop(0, `hsla(${h2},90%,65%,0)`);
+        g.addColorStop(0.6, `hsla(${h2},90%,65%,${0.28*current.ring})`);
+        g.addColorStop(1, `hsla(${h2},90%,65%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(cx,cy,ringR*1.15,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      if(current.glow > 0.02){
+        const glowR = breatheR * 1.5;
+        const g = ctx.createRadialGradient(cx,cy,breatheR*0.2,cx,cy,glowR);
+        g.addColorStop(0, `hsla(${h2},90%,68%,${0.35*current.glow})`);
+        g.addColorStop(1, `hsla(${h2},90%,68%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(cx,cy,glowR,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      if(current.glass > 0.02){
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx,cy,breatheR,0,Math.PI*2);
+        ctx.clip();
+        const g = ctx.createRadialGradient(cx-breatheR*0.3,cy-breatheR*0.35,breatheR*0.1,cx,cy,breatheR*1.1);
+        g.addColorStop(0, `hsla(0,0%,100%,${0.9*current.glass})`);
+        g.addColorStop(0.4, `hsla(${h1},40%,85%,${0.35*current.glass})`);
+        g.addColorStop(1, `hsla(${h3},60%,35%,${0.15*current.glass})`);
+        ctx.fillStyle = g;
+        ctx.fillRect(cx-breatheR,cy-breatheR,breatheR*2,breatheR*2);
+        ctx.restore();
+      }
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx,cy,breatheR*0.98,0,Math.PI*2);
+      ctx.clip();
+
+      const swirlCount = Math.round(current.swirlCount);
+      const rot = t * current.swirlSpeed;
+      for(let i=0;i<swirlCount;i++){
+        const angOffset = (i/swirlCount)*Math.PI*2 + rot;
+        ctx.save();
+        ctx.translate(cx,cy);
+        ctx.rotate(angOffset);
+        const grad = ctx.createLinearGradient(-breatheR,0,breatheR,0);
+        grad.addColorStop(0, `hsla(${h1},90%,75%,0)`);
+        grad.addColorStop(0.5, i%2===0 ? c2 : c3);
+        grad.addColorStop(1, `hsla(${h3},90%,60%,0)`);
+        ctx.strokeStyle = grad;
+        ctx.globalAlpha = current.swirlOpacity * (0.55 + 0.45*Math.sin(t*2+i));
+        ctx.lineWidth = breatheR*0.22;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-breatheR*0.9, 0);
+        ctx.quadraticCurveTo(0, breatheR*0.55*(i%2===0?1:-1), breatheR*0.9, 0);
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.restore();
+
+      if(current.glass > 0.15){
+        const hlR = breatheR*0.22;
+        const g = ctx.createRadialGradient(cx-breatheR*0.32,cy-breatheR*0.38,0,cx-breatheR*0.32,cy-breatheR*0.38,hlR);
+        g.addColorStop(0, `hsla(0,0%,100%,${0.55*current.glass})`);
+        g.addColorStop(1, `hsla(0,0%,100%,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(cx-breatheR*0.32,cy-breatheR*0.38,hlR,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+    return { setState };
+  }
+
+  const orbCanvas = document.getElementById('orb-canvas');
+  const mainOrb = createOrb(orbCanvas, 80);
+
+  window.orb = {
+    set(name){
+      mainOrb.setState(name);
+    }
+  };
+  window.orb.set('reposo');
+})();
+
+/* =========================================================
+   ONDA DE VOZ — se activa con el botón de micrófono.
+   Usa el micrófono real (Web Audio API) cuando el sistema lo
+   permite; si no hay permiso o no hay micrófono, cae a una
+   animación simulada para que la interfaz no se rompa.
+   ========================================================= */
+(function(){
+  const canvas = document.getElementById('wave-canvas');
+  const ctx = canvas.getContext('2d');
+  const waveWrap = document.getElementById('wave-wrap');
+  const waveLabel = document.getElementById('wave-label');
+
+  let listening = false;
+  let level = 0;
+  let targetLevel = 0;
+  let t = 0;
+  let rafId = null;
+
+  // --- Captura real de audio ---
+  let audioCtx = null;
+  let analyser = null;
+  let micStream = null;
+  let freqData = null;
+  let usingRealMic = false;
+  let micPollId = null;
+
+  function resize(){
+    const ratio = window.devicePixelRatio || 1;
+    const w = waveWrap.clientWidth || 200;
+    const h = waveWrap.clientHeight || 40;
+    canvas.width = Math.max(1, Math.round(w * ratio));
+    canvas.height = Math.max(1, Math.round(h * ratio));
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(ratio,0,0,ratio,0,0);
+  }
+  window.addEventListener('resize', resize);
+  // El tamaño de la caja puede cambiar por layout (al ocultar el
+  // input, cambiar de tema, etc.) — este observer mantiene el
+  // canvas siempre del ancho real de su contenedor.
+  if (window.ResizeObserver) {
+    new ResizeObserver(() => resize()).observe(waveWrap);
+  }
+
+  function waveY(x, amp, phase, freq, seed){
+    const n = Math.sin(x*freq + phase + seed) * 0.6
+            + Math.sin(x*freq*2.3 + phase*1.7) * 0.25
+            + Math.sin(x*freq*0.6 - phase*0.8) * 0.15;
+    return n * amp;
+  }
+
+  function draw(){
+    t += 0.02;
+    level += (targetLevel - level) * 0.18;
+
+    const w = canvas.clientWidth || 200;
+    const h = canvas.clientHeight || 40;
+    const midY = h/2;
+
+    ctx.clearRect(0,0,w,h);
+
+    if(level < 0.01 && !listening){
+      rafId = null;
+      return; // deja de dibujar cuando no se usa, para no gastar CPU en reposo
+    }
+
+    if(level < 0.02 && listening){
+      ctx.strokeStyle = 'rgba(140,150,190,0.35)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for(let x=0; x<=w; x+=4){
+        const y = midY + Math.sin(x*0.05 + t*0.6) * 1.5;
+        x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+      rafId = requestAnimationFrame(draw);
+      return;
+    }
+
+    const amp = h*0.42*level;
+    const grad = ctx.createLinearGradient(0,0,w,0);
+    grad.addColorStop(0.0,  'rgba(58,208,200,0.95)');
+    grad.addColorStop(0.45, 'rgba(80,150,240,0.95)');
+    grad.addColorStop(0.75, 'rgba(140,120,240,0.95)');
+    grad.addColorStop(1.0,  'rgba(190,140,235,0.9)');
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(108,140,255,0.55)';
+    ctx.shadowBlur = 10;
+
+    ctx.beginPath();
+    for(let x=0; x<=w; x+=3){
+      const y = midY + waveY(x, amp, t*2.4, 0.03, 0);
+      x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    ctx.globalAlpha = 0.45;
+    ctx.beginPath();
+    for(let x=0; x<=w; x+=3){
+      const y = midY + waveY(x, amp*0.65, t*2.4, 0.03, 1.8);
+      x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    ctx.restore();
+
+    rafId = requestAnimationFrame(draw);
+  }
+
+  function ensureLoopRunning(){
+    if (rafId === null) {
+      resize();
+      rafId = requestAnimationFrame(draw);
+    }
+  }
+
+  function simulateLevel(){
+    if(!listening || usingRealMic) return;
+    targetLevel = 0.35 + Math.random()*0.65;
+    setTimeout(simulateLevel, 180 + Math.random()*220);
+  }
+
+  async function startRealMic(){
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioCtx.createMediaStreamSource(micStream);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 512;
+      analyser.smoothingTimeConstant = 0.6;
+      source.connect(analyser);
+      freqData = new Uint8Array(analyser.frequencyBinCount);
+      return true;
+    } catch (err) {
+      console.warn('No se pudo usar el micrófono real, se simula la onda:', err);
+      return false;
+    }
+  }
+
+  function stopRealMic(){
+    if (micPollId) { cancelAnimationFrame(micPollId); micPollId = null; }
+    if (micStream) { micStream.getTracks().forEach(tr => tr.stop()); micStream = null; }
+    if (audioCtx) { audioCtx.close().catch(() => {}); audioCtx = null; }
+    analyser = null;
+  }
+
+  function pollMicLevel(){
+    if (!listening || !analyser) return;
+    analyser.getByteFrequencyData(freqData);
+    let sum = 0;
+    for (let i = 0; i < freqData.length; i++) sum += freqData[i];
+    const avg = sum / freqData.length / 255; // 0..1
+    targetLevel = Math.min(1, avg * 2.2);
+    micPollId = requestAnimationFrame(pollMicLevel);
+  }
+
+  window.voiceWave = {
+    async start(){
+      listening = true;
+      waveWrap.classList.add('active');
+      waveLabel.classList.add('show');
+      waveLabel.textContent = 'Escuchando...';
+      ensureLoopRunning();
+
+      usingRealMic = await startRealMic();
+      if (usingRealMic) {
+        pollMicLevel();
+      } else {
+        waveLabel.textContent = 'Escuchando... (sin acceso al micrófono)';
+        simulateLevel();
+      }
+    },
+    stop(){
+      listening = false;
+      targetLevel = 0;
+      waveLabel.classList.remove('show');
+      stopRealMic();
+      usingRealMic = false;
+      // deja que el nivel baje suavemente antes de esconder la caja
+      setTimeout(() => {
+        if (!listening) waveWrap.classList.remove('active');
+      }, 400);
+    },
+    isListening(){ return listening; },
+    isUsingRealMic(){ return usingRealMic; }
+  };
+})();
+
+/* =========================================================
+   CHAT — lógica de mensajes + conexión con Python (pywebview)
+   ========================================================= */
+(function(){
+  const form = document.getElementById('chat-form');
+  const input = document.getElementById('chat-input');
+  const thread = document.getElementById('thread');
+  const emptyState = document.getElementById('empty-state');
+  const sendBtn = document.getElementById('send-btn');
+  const micBtn = document.getElementById('mic-btn');
+
+  let pywebviewReady = false;
+  window.addEventListener('pywebviewready', () => { pywebviewReady = true; });
+
+  let typingTimeout = null;
+
+  function currentIdleOrbState(){
+    return document.activeElement === input && input.value.trim().length > 0
+      ? 'escritura'
+      : (document.activeElement === input ? 'enfoque' : 'reposo');
+  }
+
+  function addUserBubble(text) {
+    const wrap = document.createElement('div');
+    wrap.className = 'flex flex-col items-end w-full msg-in';
+    wrap.innerHTML = `
+      <div class="max-w-[75%] p-4 bg-primary/5 user-glow rounded-2xl rounded-tr-none">
+        <p class="font-body-md text-body-md text-on-surface leading-relaxed"></p>
+      </div>
+      <span class="mt-2 text-[10px] text-outline uppercase tracking-wider mr-1">Tú • ahora</span>
+    `;
+    wrap.querySelector('p').textContent = text;
+    thread.appendChild(wrap);
+  }
+
+  function addThinkingBubble() {
+    const wrap = document.createElement('div');
+    wrap.className = 'flex flex-col items-start max-w-[85%] msg-in';
+    wrap.innerHTML = `
+      <div class="p-4 glass-panel assistant-border rounded-2xl rounded-tl-none flex gap-2">
+        <div class="w-1.5 h-1.5 bg-secondary rounded-full animate-bounce"></div>
+        <div class="w-1.5 h-1.5 bg-secondary rounded-full animate-bounce [animation-delay:0.2s]"></div>
+        <div class="w-1.5 h-1.5 bg-secondary rounded-full animate-bounce [animation-delay:0.4s]"></div>
+      </div>
+    `;
+    thread.appendChild(wrap);
+    thread.scrollTop = thread.scrollHeight;
+    return wrap;
+  }
+
+  function addAssistantBubble(text) {
+    const wrap = document.createElement('div');
+    wrap.className = 'flex flex-col items-start max-w-[85%] msg-in';
+    wrap.innerHTML = `
+      <div class="p-4 glass-panel assistant-border rounded-2xl rounded-tl-none">
+        <p class="font-body-md text-body-md text-on-surface leading-relaxed"></p>
+      </div>
+      <span class="mt-2 text-[10px] text-outline uppercase tracking-wider ml-1">LunaIA • ahora</span>
+    `;
+    wrap.querySelector('p').textContent = text;
+    thread.appendChild(wrap);
+  }
+
+  async function handleSend(text) {
+    emptyState.style.display = 'none';
+    addUserBubble(text);
+    thread.scrollTop = thread.scrollHeight;
+
+    const thinking = addThinkingBubble();
+    sendBtn.disabled = true;
+    window.orb.set('respuesta');
+
+    try {
+      const reply = pywebviewReady
+        ? await window.pywebview.api.send_message(text)
+        : '(pywebview aún no está listo — espera un segundo y reintenta.)';
+      thinking.remove();
+      addAssistantBubble(reply);
+      if (window.notificationsEnabled !== false && !document.hasFocus() && pywebviewReady && window.pywebview.api.notify) {
+        window.pywebview.api.notify('LunaIA respondió', reply.slice(0, 150));
+      }
+    } catch (err) {
+      thinking.remove();
+      addAssistantBubble('Ocurrió un error hablando con Python: ' + err);
+    } finally {
+      sendBtn.disabled = false;
+      thread.scrollTop = thread.scrollHeight;
+      window.orb.set(currentIdleOrbState());
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    handleSend(text);
+  });
+
+  // --- Orbe reacciona al campo de texto ---
+  input.addEventListener('focus', () => {
+    if (!window.voiceWave.isListening()) window.orb.set('enfoque');
+  });
+  input.addEventListener('blur', () => {
+    if (!window.voiceWave.isListening() && input.value.trim().length === 0) {
+      window.orb.set('reposo');
+    }
+  });
+  input.addEventListener('input', () => {
+    if (window.voiceWave.isListening()) return;
+    window.orb.set('escritura');
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      window.orb.set(input.value.trim().length ? 'enfoque' : 'reposo');
+    }, 700);
+  });
+
+  // --- Micrófono: activa/desactiva la onda de voz ---
+  micBtn.addEventListener('click', () => {
+    if (window.voiceWave.isListening()) {
+      window.voiceWave.stop();
+      micBtn.classList.remove('listening');
+      input.classList.remove('hidden');
+      input.style.display = '';
+      input.focus();
+      window.orb.set(currentIdleOrbState());
+    } else {
+      window.voiceWave.start();
+      micBtn.classList.add('listening');
+      input.style.display = 'none';
+      window.orb.set('escritura'); // reutilizamos el estado activo mientras "escucha"
+    }
+  });
+
+  document.getElementById('btn-new-chat').addEventListener('click', () => {
+    thread.innerHTML = '';
+    thread.appendChild(emptyState);
+    emptyState.style.display = 'flex';
+    window.orb.set('reposo');
+    if (pywebviewReady && window.pywebview.api.new_chat) {
+      window.pywebview.api.new_chat();
+    }
+    const historyPanel = document.getElementById('history-panel');
+    if (historyPanel) historyPanel.classList.add('hidden');
+  });
+
+  // Se expone para que el panel de Historial pueda repintar mensajes guardados.
+  window.chatUI = {
+    thread, emptyState,
+    addUserBubble, addAssistantBubble,
+    clear(){
+      thread.innerHTML = '';
+      thread.appendChild(emptyState);
+    },
+  };
+})();
+</script>
+
+<script>
+/* =========================================================
+   TEMAS — recolorea TODA la app (botones, mensajes, hovers,
+   bordes de foco) vía variables CSS globales. El orbe usa su
+   propia paleta interna por estado, así que a él solo se le
+   aplica un filtro de color aparte.
+   ========================================================= */
+const THEMES = {
+  nebula: { label: 'Nebula',    a: '#3ad0c8', b: '#6c7fff', orbFilter: 'none' },
+  aurora: { label: 'Aurora',    a: '#34d399', b: '#22c1c3', orbFilter: 'hue-rotate(100deg) saturate(1.05)' },
+  sunset: { label: 'Atardecer', a: '#fb923c', b: '#f43f5e', orbFilter: 'hue-rotate(-130deg) saturate(1.1)' },
+  mono:   { label: 'Monocromo', a: '#c7c9d1', b: '#8b8f9c', orbFilter: 'grayscale(0.85) brightness(1.05)' },
+};
+let currentTheme = 'nebula';
+
+function hexToRgb(hex) {
+  const h = hex.replace('#', '');
+  const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+  const n = parseInt(full, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function applyTheme(name) {
+  const theme = THEMES[name] ? name : 'nebula';
+  currentTheme = theme;
+  const t = THEMES[theme];
+  const root = document.documentElement.style;
+
+  root.setProperty('--c-a', t.a);
+  root.setProperty('--c-b', t.b);
+  const [ar, ag, ab] = hexToRgb(t.a);
+  const [br, bg, bb] = hexToRgb(t.b);
+  root.setProperty('--c-a-soft', `rgba(${ar},${ag},${ab},0.14)`);
+  root.setProperty('--c-b-soft', `rgba(${br},${bg},${bb},0.16)`);
+  root.setProperty('--c-glow', `rgba(${br},${bg},${bb},0.5)`);
+
+  const orbCanvas = document.getElementById('orb-canvas');
+  if (orbCanvas) orbCanvas.style.filter = t.orbFilter;
+
+  document.querySelectorAll('.theme-swatch').forEach(sw => {
+    sw.classList.toggle('active', sw.dataset.theme === theme);
+  });
+}
+
+function buildThemeSwatches() {
+  const wrap = document.getElementById('theme-options');
+  wrap.innerHTML = '';
+  Object.entries(THEMES).forEach(([key, t]) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'theme-swatch rounded-xl p-3 flex flex-col items-center gap-2';
+    btn.dataset.theme = key;
+    btn.innerHTML = `
+      <span style="width:36px;height:36px;border-radius:9999px;display:block;background:linear-gradient(135deg, ${t.a}, ${t.b});"></span>
+      <span class="font-label-sm text-label-sm text-on-surface-variant">${t.label}</span>
+    `;
+    btn.addEventListener('click', () => {
+      applyTheme(key);
+      if (window.pywebview && window.pywebview.api && window.pywebview.api.set_theme) {
+        window.pywebview.api.set_theme(key);
+      }
+    });
+    wrap.appendChild(btn);
+  });
+}
+buildThemeSwatches();
+
+/* =========================================================
+   PERFIL — foto del usuario
+   ========================================================= */
+function applyProfilePhoto(dataUrl) {
+  const headerIcon = document.getElementById('user-avatar-icon');
+  const headerImg = document.getElementById('user-avatar-img');
+  const previewIcon = document.getElementById('profile-preview-icon');
+  const previewImg = document.getElementById('profile-preview-img');
+
+  if (dataUrl) {
+    headerImg.src = dataUrl; headerImg.classList.remove('hidden'); headerIcon.classList.add('hidden');
+    previewImg.src = dataUrl; previewImg.classList.remove('hidden'); previewIcon.classList.add('hidden');
+  } else {
+    headerImg.classList.add('hidden'); headerIcon.classList.remove('hidden');
+    previewImg.classList.add('hidden'); previewIcon.classList.remove('hidden');
+  }
+}
+
+document.getElementById('profile-pick-btn').addEventListener('click', async () => {
+  const statusEl = document.getElementById('profile-status');
+  if (!window.pywebview || !window.pywebview.api || !window.pywebview.api.pick_profile_photo) return;
+  statusEl.textContent = 'Abriendo selector de archivos...';
+  const result = await window.pywebview.api.pick_profile_photo();
+  if (!result) { statusEl.textContent = ''; return; }
+  if (typeof result === 'object' && result.error) {
+    statusEl.textContent = 'No se pudo cargar la imagen.';
+    return;
+  }
+  applyProfilePhoto(result);
+  statusEl.textContent = 'Foto actualizada.';
+});
+
+/* =========================================================
+   MODALES — abrir/cerrar
+   ========================================================= */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.getElementById('btn-profile').addEventListener('click', () => openModal('profile-backdrop'));
+document.getElementById('profile-close').addEventListener('click', () => closeModal('profile-backdrop'));
+document.getElementById('profile-backdrop').addEventListener('click', (e) => {
+  if (e.target.id === 'profile-backdrop') closeModal('profile-backdrop');
+});
+
+document.getElementById('btn-settings').addEventListener('click', () => openModal('settings-backdrop'));
+document.getElementById('settings-close').addEventListener('click', () => closeModal('settings-backdrop'));
+document.getElementById('settings-backdrop').addEventListener('click', (e) => {
+  if (e.target.id === 'settings-backdrop') closeModal('settings-backdrop');
+});
+
+/* =========================================================
+   HISTORIAL — lista de chats guardados
+   ========================================================= */
+const historyPanel = document.getElementById('history-panel');
+const btnHistory = document.getElementById('btn-history');
+
+async function refreshHistoryList() {
+  if (!window.pywebview || !window.pywebview.api || !window.pywebview.api.list_chats) return;
+  const chats = await window.pywebview.api.list_chats();
+  historyPanel.innerHTML = '';
+  if (!chats.length) {
+    const empty = document.createElement('p');
+    empty.className = 'text-[11px] text-outline px-2 py-2';
+    empty.textContent = 'Todavía no hay chats guardados.';
+    historyPanel.appendChild(empty);
+    return;
+  }
+  chats.forEach(chat => {
+    const btn = document.createElement('button');
+    btn.className = 'history-item w-full text-left px-3 py-2 rounded-lg text-[13px] text-on-surface-variant hover:bg-white/5 truncate';
+    btn.textContent = chat.title;
+    btn.title = chat.title;
+    btn.addEventListener('click', () => loadChat(chat.id));
+    historyPanel.appendChild(btn);
+  });
+}
+
+async function loadChat(chatId) {
+  const messages = await window.pywebview.api.load_chat(chatId);
+  window.chatUI.clear();
+  if (messages && messages.length) {
+    window.chatUI.emptyState.style.display = 'none';
+    messages.forEach(m => {
+      if (m.role === 'user') window.chatUI.addUserBubble(m.content);
+      else if (m.role === 'assistant') window.chatUI.addAssistantBubble(m.content);
+    });
+  } else {
+    window.chatUI.emptyState.style.display = 'flex';
+  }
+  window.chatUI.thread.scrollTop = window.chatUI.thread.scrollHeight;
+  window.orb.set('reposo');
+  historyPanel.classList.add('hidden');
+}
+
+btnHistory.addEventListener('click', async () => {
+  const isHidden = historyPanel.classList.contains('hidden');
+  if (isHidden) { await refreshHistoryList(); historyPanel.classList.remove('hidden'); }
+  else { historyPanel.classList.add('hidden'); }
+});
+
+/* =========================================================
+   CAMPANA — activa/desactiva notificaciones, con estado visible
+   ========================================================= */
+window.notificationsEnabled = true;
+const btnNotify = document.getElementById('btn-notify');
+
+function applyNotifyState(enabled) {
+  window.notificationsEnabled = enabled;
+  btnNotify.classList.toggle('muted', !enabled);
+  btnNotify.title = enabled ? 'Notificaciones activadas (clic para apagar)' : 'Notificaciones desactivadas (clic para encender)';
+  document.getElementById('btn-notify-icon').textContent = enabled ? 'notifications' : 'notifications_off';
+}
+
+btnNotify.addEventListener('click', () => {
+  applyNotifyState(!window.notificationsEnabled);
+  if (window.pywebview && window.pywebview.api && window.pywebview.api.set_notifications) {
+    window.pywebview.api.set_notifications(window.notificationsEnabled);
+  }
+});
+
+/* =========================================================
+   Carga inicial de ajustes guardados (tema + foto + campana)
+   ========================================================= */
+window.addEventListener('pywebviewready', async () => {
+  if (!window.pywebview.api.get_settings) return;
+  const settings = await window.pywebview.api.get_settings();
+  applyTheme(settings.theme || 'nebula');
+  applyProfilePhoto(settings.profile_photo || null);
+  applyNotifyState(settings.notifications_enabled !== false);
+});
+</script>
+</body>
+</html>
